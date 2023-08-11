@@ -230,7 +230,7 @@ class ResultVote {
     }
 ```
 ### Separation of Code and Data
-El código realiza operaciones en la base de datos y crea instancias de objetos PoliticalParty, lo que muestra una separación de lógica de negocio y datos, separa la lógica de datos de recibir y enviar datos.
+El código realiza operaciones en la base de datos y crea instancias de objetos PoliticalParty, lo que muestra una separación de lógica de recibir y enviar datos.
 
 ### Object-Oriented vs. Procedural 
 El código utiliza programación orientada a objetos al crear instancias de la clase PoliticalParty y manipular los resultados obtenidos de la base de datos.
