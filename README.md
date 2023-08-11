@@ -28,79 +28,137 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Estilos de programación
 
-### 1. Tantrum (pages/api/voteElector/politicalParty.js)
-Estilo de programacion para el manejo de errores a traves de excepciones:
 
-Ejemplo
+## 1. CandidateRepository (data/repository/CandidateRepository.js)
+### Estilo de Programación: (Arrays)
+Este fragmento de código hace uso de arrays para procesar y organizar datos obtenidos de una base de datos. A través de la función map, se itera sobre los resultados obtenidos y se construyen objetos Candidate con sus respectivas propiedades. Estos objetos se almacenan en un nuevo array listCandidate, facilitando la manipulación y presentación de los datos. El enfoque en el uso de arrays permite una estructura ordenada y eficiente para la gestión de los registros de candidatos, contribuyendo a la legibilidad y mantenibilidad del código.
+    
 ```javascript
-export default async function handlePartidoPolitico(req, res) {
-  try {
-    // Obtenemos los datos del partido político desde el servicio VoteElector
-    const datosPartidoPolitico = await VoteElector.getPoliticalParty();
-
-    // Devolvemos los datos en la respuesta con estado 200 (éxito)
-    return res.status(200).json(datosPartidoPolitico);
-  } catch (err) {
-    // Manejamos los errores y proporcionamos un mensaje de error claro
-    res.status(500).json({ error: "Error interno del servidor" });
-  }
-}
-```
-### 2. Letterbox (domain/services/ElectorService.js)
-
-Este estilo de programación se basa en la idea de que cada entidad en el sistema (la "cápsula") es independiente y solo se comunica mediante mensajes. Es una forma de lograr un acoplamiento más bajo entre los componentes de un sistema y promueve la modularidad y la escalabilidad.
-
-El código emplea la clase ElectorService como una cápsula de datos para guardar votos y obtener partidos políticos. Cada función en ElectorService tiene una única responsabilidad de recibir y despachar mensajes. La comunicación con el repositorio ElectorRepository es a través de mensajes usando llamadas await. Además, el código envía mensajes al repositorio para guardar votos o obtener partidos
-
-Ejemplo: 
-```javascript
-import ElectorRepository from "../../data/repository/ElectorRepository"; // Ruta relativa para ElectorRepository
-import Vote from "../../domain/models/Vote"; // Ruta relativa para Vote model
-
-class ElectorService {
-  // Función para guardar un voto
-  static async saveVote(vote) {
-    // Creamos una instancia del modelo Vote con los datos recibidos
-    const instanceVote = new Vote(vote.idElector, vote.idPoliticalParty, vote.date);
-
-    try {
-      // Llamada al repositorio ElectorRepository para guardar el voto
-      return await ElectorRepository.saveVote(instanceVote);
-    } catch (error) {
-      return error; // Devuelve el error en caso de fallo en la llamada al repositorio
+import {pool} from "@/ldavis/data/config/db";
+import Candidate from "@/ldavis/domain/models/Candidate";
+class CandidateRepository {
+    static async getCandidate() {
+        try{
+            const [result] = await pool.query("CALL obtener_candidatos_por_partido();");
+            const listCandidate = [];
+            result[0].map(e=>{
+                const newCandidate = new Candidate(e.id,e.name,e.lastName,e.username,e.cargo,e.nombre_partido);
+                listCandidate.push(newCandidate);
+            })
+            return listCandidate;
+        }
+        catch (error){
+            return error;
+        }
     }
-  }
-
-  // Función para obtener los partidos políticos
-  static async getPoliticalParty() {
-    try {
-      // Llamada al repositorio ElectorRepository para obtener los partidos políticos
-      return await ElectorRepository.getPoliticalParty();
-    } catch (error) {
-      return error; // Devuelve el error en caso de fallo en la llamada al repositorio
-    }
-  }
 }
 
-export default ElectorService;
+export default CandidateRepository;
 ```
-### 3. code-golf (pages/votacion.js)
 
-Tan pocas líneas de código como sea posible.
+## 2. ElectorRepository (data/repository/ElectorRepository.js)
+### Estilo de Programación (Quarantine)
+El estilo Quarantine se utiliza en el código del repositorio ElectorRepository para describir la separación y aislamiento intencional de las operaciones de base de datos. Este enfoque garantiza que las interacciones con la base de datos estén confinadas en una ubicación específica y se gestionen de manera aislada del resto del sistema. Al aislar estas operaciones en su propia clase, se mejora la organización y mantenibilidad del código, al tiempo que se reduce el riesgo de que las interacciones con la base de datos afecten inadvertidamente otras partes del sistema. Este enfoque se alinea con las prácticas de diseño que buscan limitar el impacto de los cambios y errores potenciales en las interacciones con bases de datos, lo que contribuye a un código más ordenado y robusto en la gestión de datos.
 
-Las funciones de flecha proporcionan una forma concisa de escribir funciones en JavaScript.
-
-Ejemplo:
 ```javascript
-// Obtiene el perfil del usuario desde el backend
-  const getProfile = async () => {
-    const res = await axios.get("/api/profile");
-    setVote({
-      ...vote,
-      idElector: res.data.id,
-    });
-  };
+import { pool } from "@/ldavis/data/config/db";
+import Candidate from "@/ldavis/domain/models/Candidate";
+import PoliticalParty from "@/ldavis/domain/models/PoliticalParty";
+import { responseEncoding } from "axios";
+
+class ElectorRepository {
+    static async saveVote(vote) {
+        try {
+            const [find] = await pool.query("SELECT * FROM votos WHERE id_elector = ?", vote._idElector);
+            if (find.length > 0) {
+                return {status: 401};
+            }
+            const resp = await pool.query("INSERT INTO votos VALUES (?,?,?);", [vote._idElector, vote._idPoliticalParty, vote._date]);
+            return {status: 200};
+        } catch (err) {
+            return {status: 500};
+            //throw new Error("Error en la base de datos"); // o cualquier otro mensaje de error
+        }
+    }
+
+    static async getPoliticalParty() {
+        try {
+            const [result] = await pool.query("SELECT * FROM partido_politico;");
+            const listPoliticalParty = [];
+            result.map(e => {
+                const newPoliticalParty = new PoliticalParty(e.id, e.partido);
+                listPoliticalParty.push(newPoliticalParty);
+            });
+            return listPoliticalParty;
+        } catch (err) {
+            return err;
+        }
+    }
+}
+
+export default ElectorRepository;
+
 ```
+## 3. CandidateRepository (data/repository/CandidateRepository.js)
+### Estilo de Programación: (Holywood)
+El patrón de diseño Hollywood es empleado en el código para la gestión de personas (PersonRepository) en el contexto de autenticación. En este enfoque, el componente de alto nivel (PersonRepository) toma el control y llama a los componentes de bajo nivel (Electror y Admin) según sea necesario. Esto evita la dependencia directa de los componentes de bajo nivel en los de alto nivel, promoviendo una estructura más organizada y desacoplada. El componente de alto nivel orquesta la creación de instancias de Electror y Admin basándose en los resultados de la consulta a la base de datos. Al separar la lógica de control de las decisiones sobre la creación de objetos, se mejora la modularidad y facilita futuras expansiones o cambios en la lógica. Este enfoque se asemeja a cómo en Hollywood los actores son llamados por el director para desempeñar sus roles, evitando así que los actores tomen decisiones sobre cuándo o cómo son requeridos en la producción.
+
+```javascript
+import {pool} from "@/ldavis/data/config/db";
+import Elector from "@/ldavis/domain/models/Elector";
+import Admin from "@/ldavis/domain/models/Admin";
+
+class PersonRepository {
+    static async getPerson(username, password) {
+        try {
+            const [result] = await pool.query(
+                "SELECT * FROM persona WHERE username = ? AND password = ?",
+                [username, password]
+            );
+
+            let person;
+            if (result.length > 0) {
+                const [admin] = await pool.query("SELECT * FROM administrador WHERE id = ?", result[0].id);
+                if (admin.length === 0) {
+                    person = new Elector(result[0].id, result[0].name, result[0].lastName, result[0].username, "ldavis@unsa.edu.pe");
+                } else {
+                    person = new Admin(result[0].id, result[0].name, result[0].lastName, result[0].username, "Gerente de Sistemas");
+                }
+                return {status: 200, person};
+            } else {
+                return {status: 401};
+            }
+        } catch (error) {
+            return error;
+        }
+    }
+}
+
+export default PersonRepository;
+
+```
+## 4 Code-golf
+
+En este código se está utilizando el estilo de programación code-golf, se utilizan tan pocas líneas como sean posibles sin modificar la funcionalidad del código.
+
+```bash
+import Person from "@/ldavis/domain/models/Person";
+class Admin extends Person {
+	constructor(id, name, lastName, username, job) {
+    	super(id, name, lastName, username, job);
+    	this.job = job;
+	}
+	// También podemos agregar getters y setters específicos para el atributo "email" si es necesario
+	get job() {
+    	return this._job;
+	}
+	set job(value) {
+    	this._job = value;
+	}
+}
+export default Admin;
+```
+
 ## Convenciones de programación aplicados:
 ## Prácticas Codificación legible
 
@@ -171,8 +229,11 @@ class ResultVote {
         this._numVotes = numVotes;
     }
 ```
-- Separation of Code and Data: El código realiza operaciones en la base de datos y crea instancias de objetos PoliticalParty, lo que muestra una separación de lógica de negocio y datos.
-    - Object-Oriented vs. Procedural: El código utiliza programación orientada a objetos al crear instancias de la clase PoliticalParty y manipular los resultados obtenidos de la base de datos.
+### Separation of Code and Data
+El código realiza operaciones en la base de datos y crea instancias de objetos PoliticalParty, lo que muestra una separación de lógica de negocio y datos, separa la lógica de datos de recibir y enviar datos.
+
+### Object-Oriented vs. Procedural 
+El código utiliza programación orientada a objetos al crear instancias de la clase PoliticalParty y manipular los resultados obtenidos de la base de datos.
 
 ```javascript
 import { pool } from "@/ldavis/data/config/db";
