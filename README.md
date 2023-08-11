@@ -165,7 +165,7 @@ CREATE TABLE `electores` (
 
 Límite de caracteres por línea y uso de sangría en el código (domains/models/Person.j)
 
-```bash
+```javascript
 class Person {
     constructor(id, name, lastName, username) {
         this.id = id;
@@ -192,7 +192,7 @@ class Person {
 
 se utilizo el tipo de nomenclatura camelCase (domains/models/Person.j)
 
-```bash
+```javascript
 class ResultVote {
     constructor(id, politicalParty, president, numVotes) {
         this._id = id;
@@ -200,11 +200,11 @@ class ResultVote {
         this._president = president;
         this._numVotes = numVotes;
     }
-
+```
 - Separation of Code and Data: El código realiza operaciones en la base de datos y crea instancias de objetos PoliticalParty, lo que muestra una separación de lógica de negocio y datos.
     - Object-Oriented vs. Procedural: El código utiliza programación orientada a objetos al crear instancias de la clase PoliticalParty y manipular los resultados obtenidos de la base de datos.
 
-javascript
+```javascript
 import { pool } from "@/ldavis/data/config/db";
 import Candidate from "@/ldavis/domain/models/Candidate";
 import PoliticalParty from "@/ldavis/domain/models/PoliticalParty";
