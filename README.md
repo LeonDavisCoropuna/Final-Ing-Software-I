@@ -44,6 +44,7 @@ class CandidateRepository {
 
 export default CandidateRepository;
 ```
+**Single Responsibility Principle (SRP):** La clase CandidateRepository tiene una única responsabilidad: interactuar con la base de datos para obtener candidatos. Su función principal es recuperar y construir instancias de objetos Candidate, manteniendo un único propósito.
 
 ## 2. ElectorRepository (data/repository/ElectorRepository.js)
 ### Estilo de Programación (Quarantine)
@@ -94,6 +95,7 @@ class ElectorRepository {
 export default ElectorRepository;
 
 ```
+**Single Responsibility Principle (SRP):** La clase ElectorRepository se ocupa de manejar la lógica de guardar votos y obtener partidos políticos. Cada método se enfoca en una única responsabilidad, que es manipular la base de datos en relación con la votación y los partidos políticos.
 ## 3. CandidateRepository (data/repository/CandidateRepository.js)
 ### Estilo de Programación: (Holywood)
 El patrón de diseño Hollywood es empleado en el código para la gestión de personas (PersonRepository) en el contexto de autenticación. En este enfoque, el componente de alto nivel (PersonRepository) toma el control y llama a los componentes de bajo nivel (Electror y Admin) según sea necesario. Esto evita la dependencia directa de los componentes de bajo nivel en los de alto nivel, promoviendo una estructura más organizada y desacoplada. El componente de alto nivel orquesta la creación de instancias de Electror y Admin basándose en los resultados de la consulta a la base de datos. Al separar la lógica de control de las decisiones sobre la creación de objetos, se mejora la modularidad y facilita futuras expansiones o cambios en la lógica. Este enfoque se asemeja a cómo en Hollywood los actores son llamados por el director para desempeñar sus roles, evitando así que los actores tomen decisiones sobre cuándo o cómo son requeridos en la producción.
@@ -136,6 +138,7 @@ class PersonRepository {
 export default PersonRepository;
 
 ```
+**Single Responsibility Principle (SRP):** La clase PersonRepository tiene la responsabilidad de autenticar y obtener información sobre personas. Aunque no está explícitamente separado en diferentes clases, cada método se enfoca en una tarea específica.
 ## 4. ResultRepository (data/repository/ResultRepository.js)
 ### Estilo de Programación:(Arrays)
 Este código utiliza el estilo de programación Arrays al emplear de manera efectiva la manipulación de arrays para gestionar datos. En específico, se obtienen resultados de una base de datos y se transforman en instancias de una clase ResultVote. Mediante el uso del método map, se recorre el conjunto de resultados y se crea un nuevo array que almacena estas instancias. Este enfoque de programación orientada a arrays permite un procesamiento organizado y eficiente de datos, lo que mejora la claridad y mantenibilidad del código.
@@ -165,3 +168,4 @@ class ResultRepository{
 export default ResultRepository;
 
 ```  
+**Single Responsibility Principle (SRP):** La clase ResultRepository se encarga de obtener resultados de votación a partir de la base de datos y construir instancias de objetos ResultVote. Cada método se enfoca en una única responsabilidad.
