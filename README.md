@@ -1,21 +1,27 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Arqutectura por capas
-###Capa de Presentación:
-pages/: En Next.js, las páginas se encuentran dentro de esta carpeta. Aquí colocarías las páginas específicas de tu sitio web, por ejemplo, index.js, about.js, contact.js, etc.
-components/: Aquí colocarías componentes reutilizables de React que se utilizan para construir las páginas.
-
-*Capa de Aplicación:*
-pages/api/: En Next.js, puedes crear API routes dentro de esta carpeta. Aquí es donde implementarías la lógica de la API para manejar las solicitudes de los clientes y comunicarte con la capa de dominio o servicios.
-
-*Capa de Dominio:*
-domain/: En esta carpeta, colocarías los modelos de dominio y la lógica de negocio. Por ejemplo, clases o funciones que representan entidades y reglas de negocio específicas para tu aplicación.
-
-*Capa de Infraestructura:*
-data/: Aquí colocarías la implementación concreta de la lógica de infraestructura, como la conexión a la base de datos, llamadas a servicios externos, almacenamiento en caché, etc.
-services/: En esta carpeta, colocarías los servicios y utilidades que son específicos de la infraestructura, como servicios de autenticación, servicios de almacenamiento en la nube, etc.
-config/: Aquí colocarías la configuración de la aplicación, como variables de entorno, configuración de la base de datos, etc.
-
+### Capa de Presentación:
+```
+- pages/: En Next.js, las páginas se encuentran dentro de esta carpeta. Aquí se colocan las páginas específicas del sitio web, por ejemplo, index.js, votacion.js, resultado.js, etc.
+- components/: Aquí se colocan los componentes reutilizables de React que se utilizan para construir las páginas.
+```
+### Capa de Aplicación:
+```
+- pages/api/: Se crea API routes dentro de esta carpeta. Aquí es donde se implementarías la lógica de la API para manejar las solicitudes de los clientes y comunicarse con la capa de dominio o servicios.
+```
+### Capa de Dominio:
+```
+- domain/: En esta carpeta, se colocan los modelos de dominio y la lógica de negocio. Por ejemplo, clases o funciones que representan entidades y reglas de negocio.
+- domain/models: Se ingresan los especificos específicas del sitio web (Peson.js, Elector.js, etc.)
+- domain/services: Se ingresa los servicios relacionados con la entidad
+```
+### Capa de Infraestructura:
+```
+- data/: Aquí coloca la implementación concreta de la lógica de infraestructura, como la conexión a la base de datos, llamadas a servicios externos, almacenamiento en caché, etc.
+- services/: En esta carpeta, colocarías los servicios y utilidades que son específicos de la infraestructura, como servicios de autenticación, servicios de almacenamiento en la nube, etc.
+- config/: Aquí colocarías la configuración de la aplicación, como variables de entorno, configuración de la base de datos, etc.
+```
 ## Trabajo encargado:
 
 ![Casos de uso](https://github.com/LeonDavisCoropuna/Final-Ing-Software-I/edit/main/public/UseCaseDiagram1.png)
