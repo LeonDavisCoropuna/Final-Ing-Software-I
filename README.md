@@ -12,7 +12,7 @@
 ```
 
 ## 1. CandidateRepository (data/repository/CandidateRepository.js)
-### Estilo de Programación
+### Estilo de Programación: (Arrays)
 Este fragmento de código hace uso de arrays para procesar y organizar datos obtenidos de una base de datos. A través de la función map, se itera sobre los resultados obtenidos y se construyen objetos Candidate con sus respectivas propiedades. Estos objetos se almacenan en un nuevo array listCandidate, facilitando la manipulación y presentación de los datos. El enfoque en el uso de arrays permite una estructura ordenada y eficiente para la gestión de los registros de candidatos, contribuyendo a la legibilidad y mantenibilidad del código.
 ### Convenciones de programación aplicados:
 
@@ -46,7 +46,7 @@ export default CandidateRepository;
 ```
 
 ## 2. ElectorRepository (data/repository/ElectorRepository.js)
-### Estilo de Programación
+### Estilo de Programación (Quarantine)
 El estilo Quarantine se utiliza en el código del repositorio ElectorRepository para describir la separación y aislamiento intencional de las operaciones de base de datos. Este enfoque garantiza que las interacciones con la base de datos estén confinadas en una ubicación específica y se gestionen de manera aislada del resto del sistema. Al aislar estas operaciones en su propia clase, se mejora la organización y mantenibilidad del código, al tiempo que se reduce el riesgo de que las interacciones con la base de datos afecten inadvertidamente otras partes del sistema. Este enfoque se alinea con las prácticas de diseño que buscan limitar el impacto de los cambios y errores potenciales en las interacciones con bases de datos, lo que contribuye a un código más ordenado y robusto en la gestión de datos.
 ### Convenciones de programación aplicados:
     - Commenting & Documentation: El código no tiene comentarios o documentación que expliquen el propósito y funcionamiento de las funciones y operaciones realizadas.
@@ -94,8 +94,14 @@ class ElectorRepository {
 export default ElectorRepository;
 
 ```
-### 3. Hollywood (data/repository/CandidateRepository.js)
+## 3. CandidateRepository (data/repository/CandidateRepository.js)
+### Estilo de Programación: (Holywood)
 El patrón de diseño Hollywood es empleado en el código para la gestión de personas (PersonRepository) en el contexto de autenticación. En este enfoque, el componente de alto nivel (PersonRepository) toma el control y llama a los componentes de bajo nivel (Electror y Admin) según sea necesario. Esto evita la dependencia directa de los componentes de bajo nivel en los de alto nivel, promoviendo una estructura más organizada y desacoplada. El componente de alto nivel orquesta la creación de instancias de Electror y Admin basándose en los resultados de la consulta a la base de datos. Al separar la lógica de control de las decisiones sobre la creación de objetos, se mejora la modularidad y facilita futuras expansiones o cambios en la lógica. Este enfoque se asemeja a cómo en Hollywood los actores son llamados por el director para desempeñar sus roles, evitando así que los actores tomen decisiones sobre cuándo o cómo son requeridos en la producción.
+### Convenciones de programación aplicados:
+    - Commenting & Documentation: El código no tiene comentarios o documentación que expliquen el propósito y funcionamiento de las funciones y operaciones realizadas.
+    - Consistent Indentation: El código muestra una indentación consistente, con bloques de código anidados correctamente.
+    - Consistent Naming Scheme: Se siguen convenciones de nombres consistentes para las funciones, variables y clases, como getPerson(), Elector, Admin, etc.
+    - Separation of Code and Data: El código realiza operaciones en la base de datos y crea instancias de objetos Elector y Admin, lo que muestra una separación de lógica de negocio y datos.
 ```javascript
 import {pool} from "@/ldavis/data/config/db";
 import Elector from "@/ldavis/domain/models/Elector";
@@ -130,4 +136,32 @@ class PersonRepository {
 export default PersonRepository;
 
 ```
-## Estilos de programación
+## 4. ResultRepository (data/repository/ResultRepository.js)
+### Estilo de Programación:(Arrays)
+Este código utiliza el estilo de programación Arrays al emplear de manera efectiva la manipulación de arrays para gestionar datos. En específico, se obtienen resultados de una base de datos y se transforman en instancias de una clase ResultVote. Mediante el uso del método map, se recorre el conjunto de resultados y se crea un nuevo array que almacena estas instancias. Este enfoque de programación orientada a arrays permite un procesamiento organizado y eficiente de datos, lo que mejora la claridad y mantenibilidad del código.
+### Convenciones de programación aplicados:
+    - Commenting & Documentation: El código no tiene comentarios o documentación que expliquen el propósito y funcionamiento de las funciones y operaciones realizadas.
+    - Consistent Indentation: El código muestra una indentación consistente, con bloques de código anidados correctamente.
+    - Consistent Naming Scheme: Se siguen convenciones de nombres consistentes para las funciones, variables y clases, como getResult(), ResultVote, etc.
+    - Separation of Code and Data: El código realiza operaciones en la base de datos y crea instancias de objetos ResultVote, lo que muestra una separación de lógica de negocio y datos.
+```javascript
+import {pool} from "@/ldavis/data/config/db";
+import ResultVote from "@/ldavis/domain/models/ResultVote";
+class ResultRepository{
+    static async getResult(){
+        try{
+            const [result] = await pool.query("CALL sp_obtener_datos_partido_candidatos();");
+            const listResults = [];
+            result[0].map(e=>{
+                const newPoliticalParty = new ResultVote(e.id_partido,e.nombre_partido,e.name + " " + e.lastName,e.nro_votos);
+                listResults.push(newPoliticalParty);
+            })
+            return listResults;
+        } catch (error){
+            return error
+        }
+    }
+}
+export default ResultRepository;
+
+```  
