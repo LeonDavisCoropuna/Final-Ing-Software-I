@@ -318,4 +318,42 @@ class ElectorService {
 
 export default ElectorService;
 ```
+### 3. Interface Segregation Principle (ISP)
+
+Este principio establece que los clientes no deberían verse forzados a depender de interfaces que no usan.
+
+```bash
+class Person {
+	constructor(id, name, lastName, username) {
+    	this.id = id;
+    	this.name = name;
+    	this.lastName = lastName;
+    	this.username = username;
+	}
+```
+toda persona se construye con estos 4 atributos.
+
+```bash
+import Person from "@/ldavis/domain/models/Person";
+
+class Candidate extends Person{
+	constructor(id, name, lastName, username, job , politicalParty) {
+    	super(id, name, lastName, username, job);
+    	this.job = job;
+    	this.politicalParty = politicalParty;
+	}
+```
+pero no toda persona tiene estos 2 atributos, por lo cual no se ve forzado a implementar atributos que algunos personas no darán uso.
+
+### 4. Principio de Inversión de Dependencia (DIP - Dependency Inversion Principle):
+El componente Layout hace uso de la inyección de dependencias para obtener los datos de perfil del usuario. En lugar de tener una dependencia directa de axios y realizar la llamada HTTP directamente en el componente, se pasa una función (getProfile) que maneja la llamada HTTP como una dependencia. Esto permite que el componente sea más flexible y reutilizable, y facilita la prueba a través de la inyección de dependencias.
+
+components/Layout.js
+```javascript
+
+const getProfile = async () => {
+	const res = await axios.get("/api/profile");
+	setUsername(res.data.username);
+  };
+```
 
