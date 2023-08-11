@@ -10,12 +10,18 @@
       -Verify.js
       -Success.js
 ```
-## Estilos de programación
 
-### 1. Arrays (data/repository/CandidateRepository.js)
+## 1. CandidateRepository (data/repository/CandidateRepository.js)
+### Estilo de Programación
 Este fragmento de código hace uso de arrays para procesar y organizar datos obtenidos de una base de datos. A través de la función map, se itera sobre los resultados obtenidos y se construyen objetos Candidate con sus respectivas propiedades. Estos objetos se almacenan en un nuevo array listCandidate, facilitando la manipulación y presentación de los datos. El enfoque en el uso de arrays permite una estructura ordenada y eficiente para la gestión de los registros de candidatos, contribuyendo a la legibilidad y mantenibilidad del código.
+### Convenciones de programación aplicados:
 
-Ejemplo
+    - Commenting & Documentation: No hay comentarios ni documentación que expliquen el propósito o funcionamiento del código.
+    - Consistent Indentation: El código muestra una indentación consistente, con bloques de código anidados correctamente.
+    - Consistent Naming Scheme: Se siguen convenciones de nombres consistentes para las funciones y variables, comogetCandidate(), listCandidate, newCandidate, etc.
+    - Separation of Code and Data: El código realiza operaciones en la base de datos y crea instancias de objetos Candidate, lo  que muestra una separación de lógica de negocio y datos.
+    - Object-Oriented vs. Procedural: El código utiliza programación orientada a objetos al crear instancias de la clase Candidate y manipular los resultados obtenidos de la base de datos.
+    
 ```javascript
 import {pool} from "@/ldavis/data/config/db";
 import Candidate from "@/ldavis/domain/models/Candidate";
@@ -39,8 +45,15 @@ class CandidateRepository {
 export default CandidateRepository;
 ```
 
-### 2. Quarantine (data/repository/ElectorRepository.js)
+## 2. ElectorRepository (data/repository/ElectorRepository.js)
+### Estilo de Programación
 El estilo Quarantine se utiliza en el código del repositorio ElectorRepository para describir la separación y aislamiento intencional de las operaciones de base de datos. Este enfoque garantiza que las interacciones con la base de datos estén confinadas en una ubicación específica y se gestionen de manera aislada del resto del sistema. Al aislar estas operaciones en su propia clase, se mejora la organización y mantenibilidad del código, al tiempo que se reduce el riesgo de que las interacciones con la base de datos afecten inadvertidamente otras partes del sistema. Este enfoque se alinea con las prácticas de diseño que buscan limitar el impacto de los cambios y errores potenciales en las interacciones con bases de datos, lo que contribuye a un código más ordenado y robusto en la gestión de datos.
+### Convenciones de programación aplicados:
+    - Commenting & Documentation: El código no tiene comentarios o documentación que expliquen el propósito y funcionamiento de las funciones y operaciones realizadas.
+    - Consistent Indentation: El código muestra una indentación consistente, con bloques de código anidados correctamente.
+    - Consistent Naming Scheme: Se siguen convenciones de nombres consistentes para las funciones y variables, como saveVote(), getPoliticalParty(), listPoliticalParty, newPoliticalParty, etc.
+    - Separation of Code and Data: El código realiza operaciones en la base de datos y crea instancias de objetos PoliticalParty, lo que muestra una separación de lógica de negocio y datos.
+    - Object-Oriented vs. Procedural: El código utiliza programación orientada a objetos al crear instancias de la clase PoliticalParty y manipular los resultados obtenidos de la base de datos.
 
 ```javascript
 import { pool } from "@/ldavis/data/config/db";
