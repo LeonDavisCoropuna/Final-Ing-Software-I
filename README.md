@@ -2,12 +2,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Trabajo encargado:
 ```bash
-- pages/
-      -api/voteElector/politicalParty.js
-      -api/voteElector/vote.js
-      -votacion.js
-- services/VoteElector.js
-- domain/services/ElectorService.js
+-
 ```
 ## Estilos de programación
 
