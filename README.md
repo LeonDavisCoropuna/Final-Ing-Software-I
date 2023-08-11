@@ -2,7 +2,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Trabajo encargado:
 
-![Texto alternativo](https://github.com/LeonDavisCoropuna/Final-Ing-Software-I/edit/main/public/error.png)
+![Casos de uso](https://github.com/LeonDavisCoropuna/Final-Ing-Software-I/edit/main/public/UseCaseDiagram1.png)
 
 ## Estilos de programación
 
