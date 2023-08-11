@@ -102,113 +102,145 @@ Ejemplo:
   };
 ```
 ## Convenciones de programación aplicados:
-### Names rules 
-Uso de camelCase: (pages/votacion.js)
-```javascript
+## Prácticas Codificación legible
 
-  // Estados
-  const [partidos, setPartidos] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [vote, setVote] = useState({
-    idElector: 0,
-    idPoliticalParty: 0,
-    date: new Date(),
-  });
+### Comment Rules
+Código con Comentarios (public/bananas_corp.sql)
+
+```bash
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `administrador`
+--
+
+DROP TABLE IF EXISTS `administrador`;
+CREATE TABLE `administrador` (
+  `id` int(11) NOT NULL,
+  `cargo` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `administrador`
+--
+
+INSERT INTO `administrador` (`id`, `cargo`) VALUES
+(3, 'Gerente de Sistemas ');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `candidato`
+--
+
+DROP TABLE IF EXISTS `candidato`;
+CREATE TABLE `candidato` (
+  `id` int(11) NOT NULL,
+  `cargo` varchar(50) DEFAULT NULL,
+  `id_partido` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `candidato`
+--
+
+INSERT INTO `candidato` (`id`, `cargo`, `id_partido`) VALUES
+(1, 'Presidente', 1),
+(4, 'Presidente', 2),
+(5, 'vicePresidente', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `electores`
+--
+
+DROP TABLE IF EXISTS `electores`;
+CREATE TABLE `electores` (
+  `id` int(11) NOT NULL,
+  `email` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 ```
-### Manejo de Errores 
-Manejo de excepeciones a través de try y catch : (services/VoteElector.js)
-```javascript
-  
-class VoteElector {
-  // Función para enviar un voto
-  static async sendVote(vote) {
-    try {
-      // Llamada al servicio ElectorService para guardar el voto
-      return await ElectorService.saveVote(vote);
-    } catch (error) {
-      return error; // Devuelve el error en caso de fallo en la llamada al servicio
-    }
-  }
+### Limit Line Length y Uso de Identación
 
-  // Función para obtener los partidos políticos
-  static async getPoliticalParty() {
-    try {
-      // Llamada al servicio ElectorService para obtener los partidos políticos
-      return await ElectorService.getPoliticalParty();
-    } catch (error) {
-      return error; // Devuelve el error en caso de fallo en la llamada al servicio
+Límite de caracteres por línea y uso de sangría en el código (domains/models/Person.j)
+
+```bash
+class Person {
+    constructor(id, name, lastName, username) {
+        this.id = id;
+        this.name = name;
+        this.lastName = lastName;
+        this.username = username;
     }
-  }
+    // Setters
+    set id(value) {
+        this._id = value;
+    }
+    set name(value) {
+        this._name = value;
+    }
+    set lastName(value) {
+        this._lastName = value;
+    }
+    set username(value) {
+        this._username = value;
+    }
+
+```
+### Names Rules
+
+se utilizo el tipo de nomenclatura camelCase (domains/models/Person.j)
+
+```bash
+class ResultVote {
+    constructor(id, politicalParty, president, numVotes) {
+        this._id = id;
+        this._politicalParty = politicalParty;
+        this._president = president;
+        this._numVotes = numVotes;
+    }
+
+- Separation of Code and Data: El código realiza operaciones en la base de datos y crea instancias de objetos PoliticalParty, lo que muestra una separación de lógica de negocio y datos.
+    - Object-Oriented vs. Procedural: El código utiliza programación orientada a objetos al crear instancias de la clase PoliticalParty y manipular los resultados obtenidos de la base de datos.
+
+javascript
+import { pool } from "@/ldavis/data/config/db";
+import Candidate from "@/ldavis/domain/models/Candidate";
+import PoliticalParty from "@/ldavis/domain/models/PoliticalParty";
+import { responseEncoding } from "axios";
+
+class ElectorRepository {
+    static async saveVote(vote) {
+        try {
+            const [find] = await pool.query("SELECT * FROM votos WHERE id_elector = ?", vote._idElector);
+            if (find.length > 0) {
+                return {status: 401};
+            }
+            const resp = await pool.query("INSERT INTO votos VALUES (?,?,?);", [vote._idElector, vote._idPoliticalParty, vote._date]);
+            return {status: 200};
+        } catch (err) {
+            return {status: 500};
+            //throw new Error("Error en la base de datos"); // o cualquier otro mensaje de error
+        }
+    }
+
+    static async getPoliticalParty() {
+        try {
+            const [result] = await pool.query("SELECT * FROM partido_politico;");
+            const listPoliticalParty = [];
+            result.map(e => {
+                const newPoliticalParty = new PoliticalParty(e.id, e.partido);
+                listPoliticalParty.push(newPoliticalParty);
+            });
+            return listPoliticalParty;
+        } catch (err) {
+            return err;
+        }
+    }
 }
-```
-### Limit Line Length
-Linea de codigo menor que 80 caracteres (pages/votacion.js)
-```javascript
-     <Success show={isSuccess} handleClose={logout} isSuccess={success} />
-     <Verify
-          isOpen={isOpen}
-          onRequestClose={() => setIsOpen(false)}
-          onConfirm={handleSubmit}
-          text={"Estas seguro de tu voto?"}
-     />
-     <button onClick={(e) => { e.preventDefault(); setIsOpen(true); }}>
-          Votar
-     </button>
-```
-### Comments rules
-Comentarios (pages/api/voteElector/vote.js)
-```javascript
-// Función para manejar una solicitud de voto
-export default async function handleVote(req, res) {
-  const vote = req.body; // Datos del voto desde el cuerpo de la solicitud
 
-  try {
-    // Intentamos enviar el voto al servicio VoteElector para su procesamiento
-    const result = await VoteElector.sendVote(vote);
-
-    // Verificamos el estado de la respuesta para dar la respuesta adecuada
-    if (result.status === 200) {
-      return res.status(200).json({ message: "Voto correcto" });
-    } else if (result.status === 401) {
-      return res.status(401).json({ message: "Usuario ya votó" });
-    }
-
-    // Si no se cumplieron las condiciones anteriores, respondemos con un error 500
-    return res.status(500).json({ message: "Ocurrió un error" });
-  } catch (err) {
-    // Si ocurre algún error durante el proceso, lo capturamos y respondemos con un error 500
-    res.status(500).json({ error: err }); 
-  }
-}
-```
-### Functions rules
-La regla de funciones en Clean Code promueve funciones pequeñas, cohesivas y con nombres descriptivos que hagan una sola cosa sin efectos secundarios. Se debe evitar el uso de argumentos de bandera y, en su lugar, dividir funciones en métodos más pequeños y especializados para mantener el código limpio y legible. Esto conduce a un código más claro, modular y fácil de mantener.
-
-```javascript
-class VoteElector {
-  // Función para enviar un voto
-  static async sendVote(vote) {
-    try {
-      // Llamada al servicio ElectorService para guardar el voto
-      return await ElectorService.saveVote(vote);
-    } catch (error) {
-      return error; // Devuelve el error en caso de fallo en la llamada al servicio
-    }
-  }
-
-  // Función para obtener los partidos políticos
-  static async getPoliticalParty() {
-    try {
-      // Llamada al servicio ElectorService para obtener los partidos políticos
-      return await ElectorService.getPoliticalParty();
-    } catch (error) {
-      return error; // Devuelve el error en caso de fallo en la llamada al servicio
-    }
-  }
-}
-
+export default ElectorRepository;
 ```
 ## Principios SOLID
 ### 1. Single Responsibility Principle (SRP)
