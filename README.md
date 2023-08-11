@@ -105,61 +105,31 @@ Ejemplo:
 ## Prácticas Codificación legible
 
 ### Comment Rules
-Código con Comentarios (public/bananas_corp.sql)
+Código con Comentarios que facilita la lectura y comprension del código
 
-```bash
--- --------------------------------------------------------
+```javascript
+// Función para manejar una solicitud de voto
+export default async function handleVote(req, res) {
+  const vote = req.body; // Datos del voto desde el cuerpo de la solicitud
 
---
--- Estructura de tabla para la tabla `administrador`
---
+  try {
+    // Intentamos enviar el voto al servicio VoteElector para su procesamiento
+    const result = await VoteElector.sendVote(vote);
 
-DROP TABLE IF EXISTS `administrador`;
-CREATE TABLE `administrador` (
-  `id` int(11) NOT NULL,
-  `cargo` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    // Verificamos el estado de la respuesta para dar la respuesta adecuada
+    if (result.status === 200) {
+      return res.status(200).json({ message: "Voto correcto" });
+    } else if (result.status === 401) {
+      return res.status(401).json({ message: "Usuario ya votó" });
+    }
 
---
--- Volcado de datos para la tabla `administrador`
---
-
-INSERT INTO `administrador` (`id`, `cargo`) VALUES
-(3, 'Gerente de Sistemas ');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `candidato`
---
-
-DROP TABLE IF EXISTS `candidato`;
-CREATE TABLE `candidato` (
-  `id` int(11) NOT NULL,
-  `cargo` varchar(50) DEFAULT NULL,
-  `id_partido` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `candidato`
---
-
-INSERT INTO `candidato` (`id`, `cargo`, `id_partido`) VALUES
-(1, 'Presidente', 1),
-(4, 'Presidente', 2),
-(5, 'vicePresidente', 1);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `electores`
---
-
-DROP TABLE IF EXISTS `electores`;
-CREATE TABLE `electores` (
-  `id` int(11) NOT NULL,
-  `email` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    // Si no se cumplieron las condiciones anteriores, respondemos con un error 500
+    return res.status(500).json({ message: "Ocurrió un error" });
+  } catch (err) {
+    // Si ocurre algún error durante el proceso, lo capturamos y respondemos con un error 500
+    res.status(500).json({ error: err }); 
+  }
+}
 ```
 ### Limit Line Length y Uso de Identación
 
